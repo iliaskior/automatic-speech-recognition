@@ -121,7 +121,7 @@ def extract_features(sig:np.ndarray, sr:int, num_mfcc:int=13,n_fft:int=128, hop_
     """
 
     n_fft_samples = time_configure(sr, n_fft)
-    hop_length_samples = time_configure(sr, n_fft)
+    hop_length_samples = time_configure(sr, hop_length)
 
     mfcc = librosa.feature.mfcc(y=sig, sr=sr, n_mfcc=num_mfcc, n_fft = n_fft_samples, hop_length = hop_length_samples)
     mfcc_delta = librosa.feature.delta(mfcc)
