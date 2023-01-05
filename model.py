@@ -30,9 +30,10 @@ def load_data(data_path: Union[str, Path]) -> Union[np.ndarray, np.ndarray]:
 
     X = np.array(data["mfccs_conc"])
     y = np.array(data["user"])
+    filename = np.array(data["filename"])
 
     print("Data loaded successfully!")
-    return X, y
+    return X, y, filename
     
 
 
