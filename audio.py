@@ -98,7 +98,7 @@ def split_to_signals(sig: np.ndarray, sr:int, size:int=2000, slide:int=2000) -> 
     return librosa.util.frame(sig, frame_length=size_samples, hop_length=slide_samples, axis=0)
 
 
-def extract_features(sig:np.ndarray, sr:int, num_mfcc:int=13,n_fft:int=128, hop_length:int=32) -> np.ndarray:
+def extract_features(sig:np.ndarray, sr:int, num_mfcc:int=13,n_fft:int=128, hop_length:int=32) -> Union[np.ndarray,np.ndarray, np.ndarray]:
     """Extracts MFCCs, Delta-MFCCs and Delta-Delta-MFCCs
 
     Parameters
@@ -123,9 +123,8 @@ def extract_features(sig:np.ndarray, sr:int, num_mfcc:int=13,n_fft:int=128, hop_
     n_fft_samples = time_configure(sr, n_fft)
     hop_length_samples = time_configure(sr, hop_length)
 
-    mfcc = librosa.feature.mfcc(y=sig, sr=sr, n_mfcc=num_mfcc, n_fft = n_fft_samples, hop_length = hop_length_samples)
-    mfcc_delta = librosa.feature.delta(mfcc)
-    mfcc_delta2 = librosa.feature.delta(mfcc, order=2)
-    mfccs_conc = np.concatenate((mfcc, mfcc_delta, mfcc_delta2))
+    mfccs = librosa.feature.mfcc(y=sig, sr=sr, n_mfcc=num_mfcc, n_fft = n_fft_samples, hop_length = hop_length_samples)
+    delta_mfccs = librosa.feature.delta(mfccs)
+    delta2_mfcss = librosa.feature.delta(mfccs, order=2)
 
-    return mfccs_conc
+    return mfccs, delta_mfccs, delta2_mfcss
