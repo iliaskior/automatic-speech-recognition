@@ -1,9 +1,12 @@
 from typing import Union
 from pathlib import Path
 import numpy as np
+import pandas as pd
 import pickle
 import tensorflow.keras as keras
 import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.metrics import confusion_matrix, accuracy_score
 
 
 
@@ -93,3 +96,29 @@ def plot_history(history, fullpath):
     plt.savefig(str(fullpath), transparent=True, bbox_inches='tight')
     plt.show(block=False)
 
+
+def plot_confusion_matrix(y_true, y_pred, norm, fullpath):
+
+    if not isinstance(fullpath, Path):
+        fullpath = Path(fullpath)
+
+    labels = np.unique(y_true).tolist()
+    if norm:
+        cm = confusion_matrix(y_true, y_pred, normalize='true')
+        fmt = '.2'
+    else:
+        cm = confusion_matrix(y_true, y_pred)   
+        fmt = 'd'
+
+    cm_df = pd.DataFrame(cm, index=labels, columns=labels)
+    acc = round(accuracy_score(y_true, y_pred), 2)
+
+    plt.figure(figsize=(15,10))
+    sns.heatmap(cm_df, annot=True, cmap='Greens', cbar = False, fmt = fmt, annot_kws={"size": 35 / np.sqrt(len(cm_df))})
+    plt.ylabel('Actal Values')
+    plt.yticks(rotation = 0)
+    plt.xlabel('Predicted Values')
+    plt.title(f'Accuracy: {acc}', fontsize=15)
+    fullpath.parent.mkdir(parents=True, exist_ok=True)
+    plt.savefig(str(fullpath), transparent = True, bbox_inches='tight')
+    plt.show(block=False)
