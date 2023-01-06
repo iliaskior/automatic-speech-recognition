@@ -71,7 +71,7 @@ def create_features_dataset(filepaths: Union[str, Path], exportpath: Union[str, 
                 )
 
                 #Concat the features
-                mfccs_conc = np.concatenate((mfccs, delta_mfccs, delta2_mfccs))
+                mfccs_conc = np.concatenate((mfccs.T, delta_mfccs.T, delta2_mfccs.T))
 
                 #Store data
                 ftrs["corpus"].append(corpus)
