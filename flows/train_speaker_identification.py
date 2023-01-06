@@ -81,21 +81,29 @@ def speaker_identification_experiment(path):
     le = LabelEncoder()
     y_enc = le.fit_transform(y)
 
+    #List of dataframes in which will be stored the results of each testing fold
     results = []
-    #We use GrouKfold experimentaion in order to be all the audio files in testing position
+
+    #We use GrouKfold experimentaion in order to be all the audio files in testing position in a circular manner
     #Furthermore we secure that audio segments of the same audio file will not be in train and test at the same time
     #protecting the model of getting biased
+    #I used 5 splits, which means that the testing data in each fold is about the 20% of the initial set
+    #The rest 80% will be used for training and validation set
     group_kfold_1 = GroupKFold(n_splits=5)
     for i, (idx1, test_idx) in enumerate(group_kfold_1.split(X=X, y=y_enc, groups=filename)):
         print(f"Fold {i+1}:")
         X1 , y1, filename1 = X[idx1], y_enc[idx1], filename[idx1]
         X_test , y_test, filename_test = X[test_idx], y_enc[test_idx], filename[test_idx]
 
+        #In order to have a validation set without any type of data leakage (segments of the same audio file shared in train and val)
+        #I had to use another groupkfold split with only 1 iteration
+        #The 80% of X1 will be used as training set while the rest 20% as validation set (5 splits)
         group_kfold_2 = GroupKFold(n_splits=5)
         for j, (idx2, val_idx) in enumerate(group_kfold_2.split(X=X1, y=y1, groups=filename1)):
             if j > 0:
                 break
-
+            
+            #Get the train and the validation set
             X_train , y_train = X1[idx2], y1[idx2]
             X_val , y_val = X1[val_idx], y1[val_idx]
 
@@ -129,10 +137,10 @@ def speaker_identification_experiment(path):
             y_prob = model.predict(X_test)
             y_pred = np.argmax(y_prob, axis=1)
 
-            #Store results
             y_test = le.inverse_transform(y_test)
             y_pred = le.inverse_transform(y_pred)
             
+            #Create a dataframe, which contains the true labels, the predicted labels and the predicted probs for each label
             preds_df = pd.DataFrame({
                 'label': y_test,
                 'prediction': y_pred
@@ -140,7 +148,10 @@ def speaker_identification_experiment(path):
             probs_df = pd.DataFrame(data=y_prob, columns = list(le.classes_))
             results.append(pd.concat([preds_df, probs_df], axis=1))
 
+    #List of dataframes -> dataframe
     results = pd.concat(results)
+
+    #Plot and store confusion matrix
     plot_confusion_matrix(results['label'].values, results['prediction'].values, norm=False, fullpath=OUTPUT_PATH.joinpath('step1_cm_agg.jpg'))
     plot_confusion_matrix(results['label'].values, results['prediction'].values, norm=True, fullpath=OUTPUT_PATH.joinpath('step1_normalized_cm_agg.jpg'))
 
@@ -148,6 +159,7 @@ def speaker_identification_experiment(path):
     fname = OUTPUT_PATH.joinpath('step1_results_groupkfold.pickle')
     save_pickle(fname, results)
 
+    #Trains and store a model with all available data
     if save_model == 'yes':
         create_and_save_model(X, y)
 
@@ -177,6 +189,7 @@ def main():
     path = Path(args.input_path)
     save_model = args.save_model
 
+    #Trigger the experiment
     speaker_identification_experiment(path)
     print(f'Finished in {format_time(time.time() - start_time)}')
 
