@@ -16,7 +16,7 @@ from audioblock import (
 sys.path.append(os.path.abspath(os.path.join('utils')))
 from utils import (
     format_time,
-    save_pickle,
+    save_pickle
     )
 
 #Hyperparameters for audio feature extraction
