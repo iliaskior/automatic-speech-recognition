@@ -155,11 +155,11 @@ def speaker_identification_experiment(path):
     plot_confusion_matrix(results['label'].values, results['prediction'].values, norm=False, fullpath=OUTPUT_PATH.joinpath('step1_cm.jpg'))
     plot_confusion_matrix(results['label'].values, results['prediction'].values, norm=True, fullpath=OUTPUT_PATH.joinpath('step1_normalized_cm.jpg'))
 
-    # Save results locally in pickle format
+    #Save results locally in pickle format
     fname = OUTPUT_PATH.joinpath('step1_results_groupkfold.pickle')
     save_pickle(fname, results)
 
-    #Trains and store a model with all available data
+    #Train and store a model with all available data
     if save_model == 'yes':
         create_and_save_model(X, y)
 
