@@ -77,19 +77,19 @@ $ mkdir dataset
 At first, we have to extract the audio features 
 Use the `flows/audio_feature_extraction.py`  
 Inputs:
-- Full dataset root path: root directory where audio files stands   
+- Dataset name: `solo` or `fast` 
 
 Outputs:
 - Extracts and stores the audio features for audio files in pickle file. You can find it in
 ~/dataset/data/{dataset_name}_ftrs.pickle
 
 ```
-$ python3 ~/flows/audio_feature_extraction.py -i ~/audio_files_root_path
+$ python3 ~/flows/audio_feature_extraction.py -n <dataset_name>
 ```
 
 e.g For extracting the audio features for SOLO dataset run this:
 ```
-$ python3 ~/flows/audio_feature_extraction.py -i ~/dataset/data/solo
+$ python3 ~/flows/audio_feature_extraction.py -n solo
 ```
 
 Experimentation
@@ -116,7 +116,7 @@ $ python3 ~/flows/train_speaker_identification.py -i ~/dataset/data/solo_ftrs.pi
 
 First you have to extract the audio features for the FAST dataset
 ```
-$ python3 ~/flows/audio_feature_extraction.py -i ~/dataset/data/fast
+$ python3 ~/flows/audio_feature_extraction.py -n fast
 ```
 For performing speaker identification in FAST dataset using the pretrained model of step1:
 Use the `flows/predict_speaker.py`

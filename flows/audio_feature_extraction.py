@@ -33,6 +33,15 @@ ROOT_DATASET_PATH = ROOT_PATH.joinpath('dataset').joinpath('data')
 
 
 def create_features_dataset(filepaths: Union[str, Path], exportpath: Union[str, Path]) -> None:
+    """Audio feature extraction for a given list of audio files path and storing them locally in a pickle file
+
+    Parameters
+    ----------
+    filepaths : Union[str, Path]
+        Root folder path under which the audio files are located 
+    exportpath : Union[str, Path]
+        Export path of the features set
+    """
 
     #Store features under dictionary structure
     ftrs = {
@@ -104,8 +113,12 @@ def main():
 
     args = parser.parse_args()
     name = args.dataset_name
+    
+    #Setting up the paths
     dataset_path = ROOT_DATASET_PATH.joinpath(name)
-    export_path = ROOT_DATASET_PATH.joinpath(f'{name}_ftrs.pikcle')
+    export_path = ROOT_DATASET_PATH.joinpath(f'{name}_ftrs.pickle')
+
+    #Audio feature extraction process
     create_features_dataset(dataset_path, export_path)
 
     print(f'Finished in {format_time(time.time() - start_time)}')
