@@ -152,8 +152,8 @@ def speaker_identification_experiment(path):
     results = pd.concat(results)
 
     #Plot and store confusion matrix
-    plot_confusion_matrix(results['label'].values, results['prediction'].values, norm=False, fullpath=OUTPUT_PATH.joinpath('step1_cm_agg.jpg'))
-    plot_confusion_matrix(results['label'].values, results['prediction'].values, norm=True, fullpath=OUTPUT_PATH.joinpath('step1_normalized_cm_agg.jpg'))
+    plot_confusion_matrix(results['label'].values, results['prediction'].values, norm=False, fullpath=OUTPUT_PATH.joinpath('step1_cm.jpg'))
+    plot_confusion_matrix(results['label'].values, results['prediction'].values, norm=True, fullpath=OUTPUT_PATH.joinpath('step1_normalized_cm.jpg'))
 
     # Save results locally in pickle format
     fname = OUTPUT_PATH.joinpath('step1_results_groupkfold.pickle')
