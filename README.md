@@ -71,3 +71,7 @@ Outputs:
  - A dataset which contains info about the source of each audio file of the dataset and the extracted mean & median fundamental frequency of it in a pickle file. You can find it in ~/output/step3_dataset.pickle
  - The confusion matrix (normalized and not normalized)
 
+ ```
+$ python3 ~/flows/gender_classification.py -i ~/dataset/data
+```
+
