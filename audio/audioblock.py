@@ -2,7 +2,6 @@ from pathlib import Path
 from typing import Union
 import numpy as np
 import librosa
-import pickle
 
 
 def audio_load(filepath: Union[str, Path], sr: int) -> np.ndarray:

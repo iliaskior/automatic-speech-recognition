@@ -14,7 +14,6 @@ sys.path.append(os.path.abspath(os.path.join('utils')))
 from utils import (
     format_time,
     save_pickle,
-    load_pickle,
     plot_confusion_matrix
     )
 
@@ -142,6 +141,7 @@ def speaker_identification_experiment(path):
             
             #Create a dataframe, which contains the true labels, the predicted labels and the predicted probs for each label
             preds_df = pd.DataFrame({
+                'source_file': filename_test,
                 'label': y_test,
                 'prediction': y_pred
             })

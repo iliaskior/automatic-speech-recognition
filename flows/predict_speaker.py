@@ -42,6 +42,7 @@ def predict(testing_dataset_path):
     #Create a results dataframe, which contains the true labels, the predicted labels and the predicted probs for each label
     y_pred = probs_df.idxmax(axis=1)
     preds_df = pd.DataFrame({
+                'source_file': filename,
                 'label': y,
                 'prediction': y_pred
             })

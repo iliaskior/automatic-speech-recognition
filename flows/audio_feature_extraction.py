@@ -21,8 +21,8 @@ from utils import (
 
 #Hyperparameters for audio feature extraction
 SAMPLE_RATE = 16000 #Hz
-SEGMENT_SIZE = 2000 #milliseconds
-SEGMENT_OVERLAP = 2000 #milliseconds
+WINDOW_SIZE = 2000 #milliseconds
+WINDOW_STEP = 2000 #milliseconds
 N_FFT = 128 #milliseconds
 HOP_LENGTH = 32 #milliseconds
 NUM_MFCC = 13
@@ -56,7 +56,7 @@ def create_features_dataset(filepaths: Union[str, Path], exportpath: Union[str, 
             sig = audio_load(f, sr=SAMPLE_RATE)
 
             #Split the signal into fixed size segments
-            segs = split_to_signals(sig, sr=SAMPLE_RATE, size=SEGMENT_SIZE, slide=SEGMENT_OVERLAP)
+            segs = split_to_signals(sig, sr=SAMPLE_RATE, size=WINDOW_SIZE, slide=WINDOW_STEP)
 
             #Extract audio features for each segment
             segment_id = 0
@@ -69,9 +69,9 @@ def create_features_dataset(filepaths: Union[str, Path], exportpath: Union[str, 
                     n_fft=N_FFT,
                     hop_length=HOP_LENGTH
                 )
-
+                
                 #Concat the features
-                mfccs_conc = np.concatenate((mfccs.T, delta_mfccs.T, delta2_mfccs.T))
+                mfccs_conc = np.concatenate((mfccs, delta_mfccs, delta2_mfccs))
 
                 #Store data
                 ftrs["corpus"].append(corpus)

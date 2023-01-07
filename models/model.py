@@ -74,7 +74,7 @@ def train_model(model, X_train, y_train, X_val=None, y_val=None, class_weights=N
     model.summary()
 
     # Train model
-    if X_val is not None:
+    if isinstance(X_val, type(None)):
         history = model.fit(
             X_train, y_train, 
             batch_size=BATCH_SIZE, 
@@ -89,7 +89,6 @@ def train_model(model, X_train, y_train, X_val=None, y_val=None, class_weights=N
             epochs=EPOCHS, 
             class_weight=class_weights,
         )
-
 
     return history
 
