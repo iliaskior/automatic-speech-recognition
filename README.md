@@ -1,5 +1,33 @@
 # automatic-speech-recognition
 
+## Installation
+### Conda enviroment
+
+
+Create an empty conda enviroment with Python 3.9
+```
+$ conda create -n <name> python=3.9
+```
+Activate the conda environment
+```
+conda activate <name>
+```
+#### Manually
+Install the required libraries
+```
+ $ conda install -c conda-forge librosa
+ $ conda install -c anaconda pandas
+ $ conda install -c anaconda seaborn
+ $ conda install -c anaconda jupyter
+ $ conda install -c conda-forge tensorflow
+```
+#### Through requirements.txt file
+```
+$ conda install --file requirements.txt
+```
+
+### Docker
+
 ## Dataset
 You can find the corpus's website [here](https://chains.ucd.ie/corpus.php)
 
