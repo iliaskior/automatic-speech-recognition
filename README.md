@@ -24,8 +24,7 @@ $ python3 ~/flows/audio_feature_extraction.py -i ~/dataset/data/solo
 
 Experimentation
 
-For running a full speaker indetification experiment and storing a trained model
-Use the `flows/train_speaker_identification.py`
+For running a full speaker indetification experiment and storing a trained model use the `flows/train_speaker_identification.py`
 
 Inputs:
 - Features dataset path
@@ -45,7 +44,7 @@ $ python3 ~/flows/train_speaker_identification.py -i ~/dataset/data/solo_ftrs.pi
 ## Step 2)
 *Purpose:* Perform speaker identification in FAST dataset, using a model trained only in SOLO dataset
 
-First you have to extract the audio features for FAST dataset
+First you have to extract the audio features for the FAST dataset
 ```
 $ python3 ~/flows/audio_feature_extraction.py -i ~/dataset/data/fast
 ```
@@ -69,10 +68,6 @@ Outputs:
  - Full dataset root path: root directory where audio files stands 
 
  Outputs:
-  
-- The confusion matrix (normalized and not normalized) 
-- The results of the experiment in pickle file. You can find it in
- ~/output/step2_results.pickle
  - A dataset which contains info about the source of each audio file of the dataset and the extracted mean & median fundamental frequency of it in a pickle file. You can find it in ~/output/step3_dataset.pickle
  - The confusion matrix (normalized and not normalized)
 
