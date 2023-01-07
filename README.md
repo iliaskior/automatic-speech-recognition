@@ -1,5 +1,45 @@
 # automatic-speech-recognition
 
+## Dataset
+You can find the corpus's website [here] (https://chains.ucd.ie/corpus.php)
+You can download the corpus from here [here](https://chains.ucd.ie/ftpaccess.php)
+You just need to download the following parts of the corpus:
+
+`Solo condition`
+- solo.tar.7z.001 (100 Mb)
+- solo.tar.7z.002 (100 Mb)
+- solo.tar.7z.003 (100 Mb)
+- solo.tar.7z.004 (100 Mb)
+- solo.tar.7z.005 (75 Mb)
+
+`Fast Speech`
+- fast.tar.7z.001 (100 Mb)
+- fast.tar.7z.002 (100 Mb)
+- fast.tar.7z.003 (100 Mb)
+- fast.tar.7z.004 (16 Mb) 
+
+After downloading the above files:
+1. Create an empty folder under the root path of the current cloned repository and name it `dataset` 
+```
+$ cd ~/automatic-speech-recognition
+$ mkdir dataset
+```
+2. Uncompress the compressed files under dataset folder
+
+3. After that you should see the following structure
+```
+/automatic-speech-recogntion
+    /dataset
+        /data
+            /fast
+            /solo
+    /audio
+    /flows
+    /models
+    /utils
+
+```
+
 ## Step 1)
 
 *Purpose:* Perform speaker identification in SOLO dataset
