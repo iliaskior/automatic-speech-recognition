@@ -1,7 +1,7 @@
 # automatic-speech-recognition
 
 ## Dataset
-You can find the corpus's website [here] (https://chains.ucd.ie/corpus.php)
+You can find the corpus's website [here](https://chains.ucd.ie/corpus.php)
 
 You can download the corpus from here [here](https://chains.ucd.ie/ftpaccess.php)
 
