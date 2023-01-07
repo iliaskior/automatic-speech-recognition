@@ -1,33 +1,5 @@
 # automatic-speech-recognition
 
-## Installation
-### Conda enviroment
-
-
-Create an empty conda enviroment with Python 3.9
-```
-$ conda create -n <name> python=3.9
-```
-Activate the conda environment
-```
-conda activate <name>
-```
-#### Manually
-Install the required libraries
-```
- $ conda install -c conda-forge librosa
- $ conda install -c anaconda pandas
- $ conda install -c anaconda seaborn
- $ conda install -c anaconda jupyter
- $ conda install -c conda-forge tensorflow
-```
-#### Through requirements.txt file
-```
-$ conda install --file requirements.txt
-```
-
-### Docker
-
 ## Dataset
 You can find the corpus's website [here](https://chains.ucd.ie/corpus.php)
 
@@ -69,6 +41,50 @@ $ mkdir dataset
     /utils
 
 ```
+
+## Installation
+### Conda enviroment
+
+
+Create an empty conda enviroment with Python 3.9
+```
+$ conda create -n <name> python=3.9
+```
+Activate the conda environment
+```
+conda activate <name>
+```
+#### Manually
+Install the required libraries
+```
+ $ conda install -c conda-forge librosa
+ $ conda install -c anaconda pandas
+ $ conda install -c anaconda seaborn
+ $ conda install -c anaconda jupyter
+ $ conda install -c conda-forge tensorflow
+```
+#### Through requirements.txt file
+```
+$ conda install --file requirements.txt
+```
+
+### Docker
+To install via dockerfile run:
+```
+$ docker build -t <image_name> . 
+```
+Start the container
+```
+docker run -t <image_name>
+```
+Afterwards in container's terminal you may need to run the following 2 commands
+
+```
+$ apt-get update -y
+$ apt-get install -y libsndfile-dev
+```
+
+You are ready to go!
 
 ## Step 1)
 
