@@ -5,7 +5,6 @@ import pickle
 import h5py
 import tensorflow.keras as keras
 import matplotlib.pyplot as plt
-
 from tensorflow.keras.models import load_model, save_model
 
 
@@ -14,7 +13,7 @@ BATCH_SIZE = 16
 EPOCHS = 20
 
 
-def load_data(data_path: Union[str, Path]) -> Union[np.ndarray, np.ndarray]:
+def load_data(data_path: Union[str, Path]) -> Union[np.ndarray, np.ndarray, np.ndarray]:
     """Load extracted features and transform to the expected format
 
     Parameters
@@ -24,8 +23,8 @@ def load_data(data_path: Union[str, Path]) -> Union[np.ndarray, np.ndarray]:
 
     Returns
     -------
-    Union[np.ndarray, np.ndarray]
-        Features, Labels
+    Union[np.ndarray, np.ndarray, np.ndarray]
+        Features, Labels, Source filename
     """
     
 
@@ -40,11 +39,21 @@ def load_data(data_path: Union[str, Path]) -> Union[np.ndarray, np.ndarray]:
     return X, y, filename
     
 
-def build_model(input_shape, n_classes):
-    """Generates RNN-LSTM model
-    :param input_shape (tuple): Shape of input set
-    :return model: RNN-LSTM model
+def build_model(input_shape:tuple, n_classes:int):
+    """Generates RNN-LSTM model object
+
+    Parameters
+    ----------
+    input_shape : tuple
+        Input model shape 
+    n_classes : int
+        Number of classes
+
+    Returns
+    -------
+        Model object
     """
+    
 
     # build network topology
     model = keras.Sequential()
@@ -64,6 +73,7 @@ def build_model(input_shape, n_classes):
 
 
 def train_model(model, X_train, y_train, X_val=None, y_val=None, class_weights=None):
+    """Model training"""
 
     # compile model
     optimiser = keras.optimizers.Adam(learning_rate=LEARNING_RATE)
@@ -94,6 +104,7 @@ def train_model(model, X_train, y_train, X_val=None, y_val=None, class_weights=N
 
 
 def plot_history(history, fullpath):
+    """Plots the training history and stores it as image file"""
 
     if not isinstance(fullpath, Path):
         fullpath = Path(fullpath)
@@ -124,6 +135,8 @@ def plot_history(history, fullpath):
 
 
 def load_model_ext(filepath, custom_objects=None):
+    """Loads a model with its classes"""
+
     model = load_model(filepath, custom_objects=None)
     with h5py.File(filepath, mode='r') as f:
         metadata = f.attrs.get('labels', None)
@@ -132,6 +145,8 @@ def load_model_ext(filepath, custom_objects=None):
 
 
 def save_model_ext(model, filepath, overwrite=True, metadata=None):
+    """Saves a model with attached metadata like classes"""
+
     filepath.parent.mkdir(parents=True, exist_ok=True)
     save_model(model, filepath, overwrite)
     if metadata is not None:
