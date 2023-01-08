@@ -4,23 +4,65 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+from typing import Union
 from pathlib import Path
 from sklearn.metrics import confusion_matrix, accuracy_score
 
 def format_time(elapsed):
+    """Converts timestamp to readable format"""
     return time.strftime("%H:%M:%S.{}".format(str(elapsed % 1)[2:])[:15], time.gmtime(elapsed))
 
-def save_pickle(fname, object):
+def save_pickle(fname:Union[str, Path], object):
+    """Stores an object in pickle format
+
+    Parameters
+    ----------
+    fname : Union[str, Path]
+        export full path (with filename)
+    object 
+        It can be any object
+    """
+
+    if isinstance(fname, str):
+        fname = Path(fname)
+
     fname.parent.mkdir(parents=True, exist_ok=True)
     with open(fname, 'wb') as f:
         pickle.dump(object, f)
 
-def load_pickle(fname):
+def load_pickle(fname:Union[str, Path]):
+    """Load pickle file
+
+    Parameters
+    ----------
+    fname : Union[str, Path]
+        Full file path
+
+    Returns
+    -------
+        The loaded object
+    """
+
     with open(fname, 'rb') as f:
         data = pickle.load(f)
     return data
 
-def plot_confusion_matrix(y_true, y_pred, norm, fullpath, figsize=(15,10)):
+def plot_confusion_matrix(y_true:np.ndarray, y_pred:np.ndarray, norm:bool, fullpath:Union[str, Path], figsize=(15,10)):
+    """Plot and store as image the confusion matrix
+
+    Parameters
+    ----------
+    y_true : np.ndarray
+        Groundtruth
+    y_pred : np.ndarray
+        Prediction
+    norm : bool
+        Normalize or not the confusion matrix
+    fullpath : Union[str, Path]
+        Export full path
+    figsize : tuple, optional
+        Image size, by default (15,10)
+    """
 
     if not isinstance(fullpath, Path):
         fullpath = Path(fullpath)
