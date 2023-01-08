@@ -4,6 +4,7 @@ import time
 import json
 import argparse
 import pandas as pd
+from typing import Union
 from pathlib import Path
 
 sys.path.append(os.path.abspath(os.path.join('utils')))
@@ -23,10 +24,19 @@ from model import (
 ROOT_PATH = Path.cwd()
 ROOT_DATASET_PATH = ROOT_PATH.joinpath('dataset').joinpath('data')
 OUTPUT_PATH = ROOT_PATH.joinpath('output')
+
+#Path of the pretrained model
 PRETRAINED_MODEL_PATH = OUTPUT_PATH.joinpath('speaker_identification.h5')
 
 
-def predict(testing_dataset_path):
+def predict(testing_dataset_path: Union[str, Path]) -> None:
+    """Predict speaker for each sample in testing set. Saving results locally and plot the confusion matrix
+
+    Parameters
+    ----------
+    testing_dataset_path : Union[str, Path]
+        Full path of testing dataset pickel
+    """
 
     #Load the pretrained model
     pretrained_model, metadata = load_model_ext(PRETRAINED_MODEL_PATH)
@@ -39,7 +49,7 @@ def predict(testing_dataset_path):
     y_prob = pretrained_model.predict(X)
     probs_df = pd.DataFrame(data=y_prob, columns=labels)
 
-    #Create a results dataframe, which contains the true labels, the predicted labels and the predicted probs for each label
+    #Create a results dataframe, which contains the source file name true labels, the predicted labels and the predicted probs for each label
     y_pred = probs_df.idxmax(axis=1)
     preds_df = pd.DataFrame({
                 'source_file': filename,
@@ -56,6 +66,8 @@ def predict(testing_dataset_path):
     fname = OUTPUT_PATH.joinpath('step2_results.pickle')
     save_pickle(fname, results)
 
+    return None
+
 
 def main():
     start_time = time.time()
@@ -71,6 +83,8 @@ def main():
 
     args = parser.parse_args()
     path = Path(args.input_path)
+
+    #Make predictions 
     predict(path)
     print(f'Finished in {format_time(time.time() - start_time)}')
 
