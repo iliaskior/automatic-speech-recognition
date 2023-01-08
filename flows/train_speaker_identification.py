@@ -5,6 +5,7 @@ import json
 import argparse
 import numpy as np
 import pandas as pd
+from typing import Union
 from pathlib import Path
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import GroupKFold
@@ -32,6 +33,8 @@ ROOT_DATASET_PATH = ROOT_PATH.joinpath('dataset').joinpath('data')
 OUTPUT_PATH = ROOT_PATH.joinpath('output')
 
 def create_and_save_model(X, y):
+    """Train and store a model with all available data"""
+
     print('---- Creating general model for all ----')
 
     #Label encoding
@@ -72,7 +75,17 @@ def create_and_save_model(X, y):
     ) 
 
 
-def speaker_identification_experiment(path):
+def speaker_identification_experiment(path: Union[str, Path]):
+    """Speaker indentification experiment using GroupKFold method. All the data in dataset will be set as testing set 
+    in a circular manner. As soon as the experiment is completed, the aggreagted results are stored locally as well as the
+    confusion matrix. Finally if the user wants, a new model is trained with all available data 
+
+    Parameters
+    ----------
+    path : Union[str, Path]
+        Full dataset path
+    """
+
     #Load the extracted feature set for the SOLO dataset
     X, y, filename = load_data(data_path=path)
 
@@ -83,7 +96,7 @@ def speaker_identification_experiment(path):
     #List of dataframes in which will be stored the results of each testing fold
     results = []
 
-    #We use GrouKfold experimentaion in order to be all the audio files in testing position in a circular manner
+    #We use GrouKfold experimentaion in order all the audio files to be in testing position in a circular manner
     #Furthermore we secure that audio segments of the same audio file will not be in train and test at the same time
     #protecting the model of getting biased
     #I used 5 splits, which means that the testing data in each fold is about the 20% of the initial set
@@ -96,7 +109,7 @@ def speaker_identification_experiment(path):
 
         #In order to have a validation set without any type of data leakage (segments of the same audio file shared in train and val)
         #I had to use another groupkfold split with only 1 iteration
-        #The 80% of X1 will be used as training set while the rest 20% as validation set (5 splits)
+        #Finally, the 80% of X1 will be used as training set while the rest 20% as validation set (5 splits)
         group_kfold_2 = GroupKFold(n_splits=5)
         for j, (idx2, val_idx) in enumerate(group_kfold_2.split(X=X1, y=y1, groups=filename1)):
             if j > 0:
