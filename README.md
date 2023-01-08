@@ -35,6 +35,7 @@ $ mkdir dataset
         /data
             /fast
             /solo
+        /doc
     /audio
     /flows
     /models
