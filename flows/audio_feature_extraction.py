@@ -79,8 +79,9 @@ def create_features_dataset(filepaths: Union[str, Path], exportpath: Union[str, 
                     hop_length=HOP_LENGTH
                 )
                 
-                #Concat the features
-                mfccs_conc = np.concatenate((mfccs, delta_mfccs, delta2_mfccs))
+                #Vertical stack of the features
+                mfccs_conc = np.vstack((mfccs, delta_mfccs))
+                mfccs_conc = np.vstack((mfccs_conc, delta2_mfccs))
 
                 #Store data
                 ftrs["corpus"].append(corpus)
