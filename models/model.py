@@ -7,7 +7,7 @@ import tensorflow.keras as keras
 import matplotlib.pyplot as plt
 from tensorflow.keras.models import load_model, save_model
 
-
+#Model training hyperparameters
 LEARNING_RATE = 0.0001
 BATCH_SIZE = 16
 EPOCHS = 20
