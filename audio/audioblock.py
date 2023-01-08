@@ -2,14 +2,6 @@ from pathlib import Path
 from typing import Union
 import numpy as np
 import librosa
-import pickle
-
-SAMPLE_RATE = 16000 #Hz
-SEGMENT_SIZE = 2000 #milliseconds
-SEGMENT_OVERLAP = 2000 #milliseconds
-NUM_MFCC = 13
-N_FFT = 128 #milliseconds
-HOP_LENGTH = 32 #milliseconds
 
 
 def audio_load(filepath: Union[str, Path], sr: int) -> np.ndarray:
@@ -136,52 +128,3 @@ def extract_features(sig:np.ndarray, sr:int, num_mfcc:int=13,n_fft:int=128, hop_
     delta2_mfcss = librosa.feature.delta(mfccs, order=2)
 
     return mfccs, delta_mfccs, delta2_mfcss
-
-
-def create_features_dataset(filepaths: Union[str, Path], exportpath: Union[str, Path]) -> None:
-
-    feature_set = {
-        "filename": [],
-        "corpus": [],
-        "user": [],
-        "segment_id": [],
-        "mfccs_conc": []
-    }
-
-    for f in filepaths:
-        try:
-            filename = f.parts[-1]
-            corpus = f.parts[-3]
-            source = f.parts[-2]
-            print(f'Processing file {filename} !!!')
-            
-            sig = audio_load(f, sr=SAMPLE_RATE)
-            segs = split_to_signals(sig, sr=SAMPLE_RATE, size=SEGMENT_SIZE, slide=SEGMENT_OVERLAP)
-            segment_id = 0
-            for seg in segs:
-                segment_id+=1
-                mfccs, delta_mfccs, delta2_mfccs = extract_features(
-                    sig = seg,
-                    sr = SAMPLE_RATE,
-                    num_mfcc=NUM_MFCC,
-                    n_fft=N_FFT,
-                    hop_length=HOP_LENGTH
-                )
-
-                mfccs_conc = np.concatenate((mfccs, delta_mfccs, delta2_mfccs))
-
-                # store data for analysed track
-                feature_set["corpus"].append(corpus)
-                feature_set["filename"].append(filename)
-                feature_set["user"].append(source)
-                feature_set["segment_id"].append(segment_id)
-                feature_set["mfccs_conc"].append(mfccs_conc.T.tolist())
-
-        except Exception as e:
-            msg = f'Raised the exception: {e} for file {filename}'+ ' Skipping...'
-            print(msg)
-            continue
-
-    # Save features locally in pickle format
-    with open(exportpath, 'wb') as f:
-        pickle.dump(feature_set, f)

@@ -1,16 +1,19 @@
 from typing import Union
 from pathlib import Path
 import numpy as np
-import pandas as pd
 import pickle
+import h5py
 import tensorflow.keras as keras
 import matplotlib.pyplot as plt
-import seaborn as sns
-from sklearn.metrics import confusion_matrix, accuracy_score
+from tensorflow.keras.models import load_model, save_model
+
+#Model training hyperparameters
+LEARNING_RATE = 0.0001
+BATCH_SIZE = 16
+EPOCHS = 20
 
 
-
-def load_data(data_path: Union[str, Path]) -> Union[np.ndarray, np.ndarray]:
+def load_data(data_path: Union[str, Path]) -> Union[np.ndarray, np.ndarray, np.ndarray]:
     """Load extracted features and transform to the expected format
 
     Parameters
@@ -20,8 +23,8 @@ def load_data(data_path: Union[str, Path]) -> Union[np.ndarray, np.ndarray]:
 
     Returns
     -------
-    Union[np.ndarray, np.ndarray]
-        Features, Labels
+    Union[np.ndarray, np.ndarray, np.ndarray]
+        Features, Labels, Source filename
     """
     
 
@@ -36,12 +39,21 @@ def load_data(data_path: Union[str, Path]) -> Union[np.ndarray, np.ndarray]:
     return X, y, filename
     
 
+def build_model(input_shape:tuple, n_classes:int):
+    """Generates RNN-LSTM model object
 
-def build_model(input_shape, n_classes):
-    """Generates RNN-LSTM model
-    :param input_shape (tuple): Shape of input set
-    :return model: RNN-LSTM model
+    Parameters
+    ----------
+    input_shape : tuple
+        Input model shape 
+    n_classes : int
+        Number of classes
+
+    Returns
+    -------
+        Model object
     """
+    
 
     # build network topology
     model = keras.Sequential()
@@ -57,18 +69,42 @@ def build_model(input_shape, n_classes):
     # output layer
     model.add(keras.layers.Dense(n_classes, activation='softmax'))
 
+    return model
+
+
+def train_model(model, X_train, y_train, X_val=None, y_val=None, class_weights=None):
+    """Model training"""
+
     # compile model
-    optimiser = keras.optimizers.Adam(learning_rate=0.0001)
+    optimiser = keras.optimizers.Adam(learning_rate=LEARNING_RATE)
     model.compile(optimizer=optimiser,
                     loss='sparse_categorical_crossentropy',
                     metrics=['accuracy'])
 
     model.summary()
 
-    return model
+    # Train model
+    if isinstance(X_val, type(None)):
+        history = model.fit(
+            X_train, y_train, 
+            batch_size=BATCH_SIZE, 
+            epochs=EPOCHS, 
+            class_weight=class_weights,
+        )
+    else:
+        history = model.fit(
+            X_train, y_train, 
+            validation_data=(X_val, y_val), 
+            batch_size=BATCH_SIZE, 
+            epochs=EPOCHS, 
+            class_weight=class_weights,
+        )
+
+    return history
 
 
 def plot_history(history, fullpath):
+    """Plots the training history and stores it as image file"""
 
     if not isinstance(fullpath, Path):
         fullpath = Path(fullpath)
@@ -98,28 +134,22 @@ def plot_history(history, fullpath):
     plt.show(block=False)
 
 
-def plot_confusion_matrix(y_true, y_pred, norm, fullpath):
+def load_model_ext(filepath, custom_objects=None):
+    """Loads a model with its classes"""
 
-    if not isinstance(fullpath, Path):
-        fullpath = Path(fullpath)
+    model = load_model(filepath, custom_objects=None)
+    with h5py.File(filepath, mode='r') as f:
+        metadata = f.attrs.get('labels', None)
+    print('Model loaded succesfully!')
+    return model, metadata
 
-    labels = np.unique(y_true).tolist()
-    if norm:
-        cm = confusion_matrix(y_true, y_pred, normalize='true')
-        fmt = '.2'
-    else:
-        cm = confusion_matrix(y_true, y_pred)   
-        fmt = 'd'
 
-    cm_df = pd.DataFrame(cm, index=labels, columns=labels)
-    acc = round(accuracy_score(y_true, y_pred), 2)
+def save_model_ext(model, filepath, overwrite=True, metadata=None):
+    """Saves a model with attached metadata like classes"""
 
-    plt.figure(figsize=(15,10))
-    sns.heatmap(cm_df, annot=True, cmap='Greens', cbar = False, fmt = fmt, annot_kws={"size": 35 / np.sqrt(len(cm_df))})
-    plt.ylabel('Actal Values')
-    plt.yticks(rotation = 0)
-    plt.xlabel('Predicted Values')
-    plt.title(f'Accuracy: {acc}', fontsize=15)
-    fullpath.parent.mkdir(parents=True, exist_ok=True)
-    plt.savefig(str(fullpath), transparent = True, bbox_inches='tight')
-    plt.show(block=False)
+    filepath.parent.mkdir(parents=True, exist_ok=True)
+    save_model(model, filepath, overwrite)
+    if metadata is not None:
+        with h5py.File(filepath, mode='a') as f:
+            f.attrs['labels'] = metadata
+        print('Model saved succesfully!')
